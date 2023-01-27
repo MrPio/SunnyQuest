@@ -1,4 +1,5 @@
 using System;
+using DefaultNamespace;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -31,6 +32,7 @@ public class Pacman : MonoBehaviour
     private int coins = 0;
     private float lastHop = 0;
     private double _lastHit;
+    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
 
     private void Start()
     {
@@ -59,7 +61,8 @@ public class Pacman : MonoBehaviour
         {
             sr.flipX = input.x < 0;
             var movement = new Vector3(input.x, 0) * (moveSpeed * Time.fixedDeltaTime);
-            transform.position += movement;
+            if ((transform.position + movement).x > _inventoryManager.VisitedLevels - CamManager.camWidth / 2f)
+                transform.position += movement;
 
             lastHop += Time.fixedDeltaTime;
             if (Math.Abs(rb.velocity.y) < 0.05 && lastHop >= _hopRate)
@@ -68,6 +71,11 @@ public class Pacman : MonoBehaviour
                 rb.AddForce(Vector2.up * _hopStrenght);
             }
         }
+
+        // VISITED LEVELS
+        if ((int)_inventoryManager.VisitedLevels != (int)_inventoryManager.SpawnedLevelsTotalSize &&
+            transform.position.x + CamManager.camWidth / 2 >= _inventoryManager.SpawnedLevelsTotalSize)
+            _inventoryManager.VisitedLevels = _inventoryManager.SpawnedLevelsTotalSize;
 
         // Y MOVEMENT, JUMP
         if (inputJump && jumpCount < jumpHoldLimit)
@@ -138,7 +146,7 @@ public class Pacman : MonoBehaviour
     public void Hit(int damage = 1)
     {
         var now = Time.timeSinceLevelLoadAsDouble;
-        if (damage<999 && now - _lastHit < _invicibilityAfterHit)
+        if (damage < 999 && now - _lastHit < _invicibilityAfterHit)
             return;
         _lastHit = now;
         _animator.SetTrigger("Hit");

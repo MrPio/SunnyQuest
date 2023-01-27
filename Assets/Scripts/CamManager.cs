@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class CamManager : MonoBehaviour
     public float smoothSpeed = 0.125f;
     [SerializeField] private Transform _hills;
     [SerializeField] private float _parallaxFactor = 0.5f;
+    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
 
     private float _hillsWidth;
     private float _hillOffset;
@@ -26,11 +28,13 @@ public class CamManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var newPos = Vector2.Lerp(transform.position, targetToFollow.position, smoothSpeed);
-        var xPos = math.max(0f, newPos.x);
-        transform.position = new Vector3(xPos, 0, -10);
-
-        _hills.position = new Vector2(xPos * _parallaxFactor - camWidth / 2 +_hillOffset, _hills.position.y);
+        // CAM MOVEMENT
+        var newPos = new Vector2(math.max(_inventoryManager.VisitedLevels, targetToFollow.position.x), targetToFollow.position.y);
+        var smoothPos = Vector2.Lerp(transform.position, newPos, smoothSpeed);
+        transform.position = new Vector3(smoothPos.x, 0, -10);
+        
+        // HILLS MOVEMENT
+        _hills.position = new Vector2(smoothPos.x * _parallaxFactor - camWidth / 2 +_hillOffset, _hills.position.y);
         if (transform.position.x - _hills.transform.position.x - camWidth / 2 >= _hillsWidth / 2f+1f)
         {
             _hillOffset += _hillsWidth / 2;

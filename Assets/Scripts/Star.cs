@@ -9,14 +9,15 @@ using Random = UnityEngine.Random;
 public class Star : MonoBehaviour
 {
     [SerializeField] private List<AudioClip> AudioClips;
-    [SerializeField] private Timer _timer;
 
     private AudioSource _audioSource;
     private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private Timer _timer;
 
     private void Start()
     {
         _audioSource = CamManager.mainCam.GetComponent<AudioSource>();
+        _timer = GameObject.FindWithTag("Timer").GetComponent<Timer>();
     }
 
     private void OnTriggerEnter2D(Collider2D col)

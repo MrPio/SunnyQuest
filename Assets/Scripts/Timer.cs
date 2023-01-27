@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using DefaultNamespace;
 using TMPro;
@@ -18,9 +16,9 @@ public class Timer : MonoBehaviour
     };
 
 
-    private float _levelStart, _elapsed;
+    private float _elapsed,_lastCheck;
     private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
-    private bool _shortage = false;
+    private bool _shortage;
 
     private void Start()
     {
@@ -29,24 +27,29 @@ public class Timer : MonoBehaviour
 
     public void NewLevel()
     {
-        _levelStart = Time.timeSinceLevelLoad;
         _elapsed = 0;
+        _lastCheck = 0;
     }
 
     private void FixedUpdate()
     {
         _elapsed += Time.fixedDeltaTime;
+        if(_elapsed-_lastCheck<.5f)
+            return;
+        _lastCheck = _elapsed;
+        
         var totDuration = _levelsDuration[_inventoryManager.CurrentLevel - 1];
         var remaining = totDuration - _elapsed;
 
+        // TIME'S UP!
         if (remaining <= 0f)
         {
             _timerText.text = "Time's up!";
             _pacman.Hit(999);
         }
-        
-        _timerText.text = remaining.ToString("F2");
-        
+
+        _timerText.text = ((int)remaining).ToString();
+
         // WARNING ANIMATION
         if (!_shortage && remaining < totDuration * 0.25f)
         {

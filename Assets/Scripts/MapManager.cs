@@ -9,7 +9,6 @@ public class MapManager : MonoBehaviour
 
     public GameObject grid;
     public List<GameObject> levels;
-    public Vector2 levelCells;
     [SerializeField] private GameObject _gate;
 
     private float lastSpawn;
@@ -32,10 +31,11 @@ public class MapManager : MonoBehaviour
         {
             NewLevel();
 
+            var currentLevelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1];
             // REMOVING OLD LEVELS
             for (var i = _instantiatedLevels.Count - 1; i >= 0; --i)
             {
-                if (_instantiatedLevels[i].transform.position.x + (levelCells.x * gridComponent.cellSize.x) <
+                if (_instantiatedLevels[i].transform.position.x + (currentLevelSize.x * gridComponent.cellSize.x) <
                     transform.position.x)
                 {
                     print($"*** Removed level {i} ***");
@@ -49,8 +49,9 @@ public class MapManager : MonoBehaviour
 
     private void NewLevel()
     {
-        var newLevel = Instantiate(levels[_inventoryManager.CurrentLevel], grid.transform);
-        ++_inventoryManager.CurrentLevel;
+        var currentLevel=++_inventoryManager.CurrentLevel;
+        var newLevel = Instantiate(levels[currentLevel - 1], grid.transform);
+        var currentLevelSize = _inventoryManager.LevelsSize[currentLevel - 1];
         levelTilemaps.Add(newLevel.GetComponent<Tilemap>());
         newLevel.transform.SetPositionAndRotation(
             position: new Vector2(lastSpawn, 0),
@@ -59,11 +60,14 @@ public class MapManager : MonoBehaviour
         _instantiatedLevels.Add(newLevel);
         var gate = Instantiate(
             original: _gate,
-            position: new Vector2(lastSpawn + levelCells.x * gridComponent.cellSize.x / 2f, 0),
+            position: new Vector2(lastSpawn + currentLevelSize.x * gridComponent.cellSize.x / 2f, 0),
             rotation: Quaternion.identity
         );
         _inventoryManager.Gates.Add(gate);
-        lastSpawn += (levelCells.x * gridComponent.cellSize.x);
+        lastSpawn += (currentLevelSize.x * gridComponent.cellSize.x);
+        if (currentLevel > 1)
+            _inventoryManager.SpawnedLevelsTotalSize +=
+                _inventoryManager.LevelsSize[currentLevel - 2].x * gridComponent.cellSize.x;
         print($"*** Added level ***");
     }
 }

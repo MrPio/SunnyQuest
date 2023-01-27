@@ -10,6 +10,42 @@ namespace DefaultNamespace
         public List<GameObject> Gates=new ();
         public int Coins,Stars = 0;
         public int CurrentLevel;
+        public List<Vector2> LevelsSize = new()
+        {
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+            new Vector2(18,10),
+
+        };
+
+        public float SpawnedLevelsTotalSize,VisitedLevels;
 
         public static InventoryManager getInstance
         {

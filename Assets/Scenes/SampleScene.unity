@@ -1552,6 +1552,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6909566799214689438, guid: 779219732472a4f4a862a2edab875da7, type: 3}
   m_PrefabInstance: {fileID: 6909566799869222925}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1532708552 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4139904053202626058, guid: 8a6f9a42e5bff84428123a8accb316cd, type: 3}
+  m_PrefabInstance: {fileID: 4139904051649539965}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96a9ede5a017a5a4b9de969d3644ae96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1571597979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5294734769177145438, guid: 075dd72282d2ce54fa0b916dc4ccd21a, type: 3}
@@ -1637,6 +1648,10 @@ PrefabInstance:
       propertyPath: _hills
       value: 
       objectReference: {fileID: 1571597979}
+    - target: {fileID: 8507791136933267459, guid: 2134611a6b4797143aaa47974ecfbb9d, type: 3}
+      propertyPath: smoothSpeed
+      value: 0.06
+      objectReference: {fileID: 0}
     - target: {fileID: 8507791136933267459, guid: 2134611a6b4797143aaa47974ecfbb9d, type: 3}
       propertyPath: targetToFollow
       value: 
@@ -1783,6 +1798,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Timer
       objectReference: {fileID: 0}
+    - target: {fileID: 2828137208805500058, guid: fe5d45e77f1822c46afd3aac4b517eaa, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4289046015
+      objectReference: {fileID: 0}
     - target: {fileID: 2828137208805500059, guid: fe5d45e77f1822c46afd3aac4b517eaa, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1868,6 +1887,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7145898761672752962, guid: fe5d45e77f1822c46afd3aac4b517eaa, type: 3}
+      propertyPath: _pacman
+      value: 
+      objectReference: {fileID: 1532708552}
+    - target: {fileID: 7145898761672752962, guid: fe5d45e77f1822c46afd3aac4b517eaa, type: 3}
       propertyPath: _animator
       value: 
       objectReference: {fileID: 194902929}
@@ -1875,6 +1898,10 @@ PrefabInstance:
       propertyPath: _timerText
       value: 
       objectReference: {fileID: 194902927}
+    - target: {fileID: 7145898761672752962, guid: fe5d45e77f1822c46afd3aac4b517eaa, type: 3}
+      propertyPath: _levelsDuration.Array.data[0]
+      value: 300
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fe5d45e77f1822c46afd3aac4b517eaa, type: 3}
 --- !u!1001 &3198353273007382520
@@ -2011,7 +2038,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4139904052029136426, guid: 8a6f9a42e5bff84428123a8accb316cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.79
+      value: 4.55
       objectReference: {fileID: 0}
     - target: {fileID: 4139904052029136426, guid: 8a6f9a42e5bff84428123a8accb316cd, type: 3}
       propertyPath: m_LocalPosition.z
