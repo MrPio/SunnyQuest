@@ -1,6 +1,8 @@
 using System;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
 public class Pacman : MonoBehaviour
@@ -10,6 +12,7 @@ public class Pacman : MonoBehaviour
     public BoxCollider2D bc;
     public SpriteRenderer sr;
     public float moveSpeed = 5.0f;
+    public float ladderSpeed = 8.0f;
     public float jumpForce = 10.0f;
     public int jumpHoldLimit = 3;
     [SerializeField] private float _hopRate = 1;
@@ -18,6 +21,8 @@ public class Pacman : MonoBehaviour
     [SerializeField] private int _maxHealth = 3;
     [SerializeField] private int _health = 3;
     [SerializeField] private GameObject _gameOverScreen;
+    [SerializeField] private float _velocityYMax = 8f;
+    [SerializeField] private float _invicibilityAfterHit = 3f;
 
     private Vector2 input;
     private bool inputJump;
@@ -25,6 +30,7 @@ public class Pacman : MonoBehaviour
     private Bounds bounds;
     private int coins = 0;
     private float lastHop = 0;
+    private double _lastHit;
 
     private void Start()
     {
@@ -34,6 +40,7 @@ public class Pacman : MonoBehaviour
     private void Update()
     {
         input.x = Input.GetAxisRaw("Horizontal");
+        input.y = Input.GetAxisRaw("Vertical");
         inputJump = Input.GetKey(KeyCode.Space);
         /*if (!inputJump && jumpCount != 1)
         {
@@ -43,10 +50,15 @@ public class Pacman : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Math.Abs(input.x) > 0.05)
+        // ON LADDER MOVEMENT
+        if (math.abs(input.y) > 0.05 && rb.velocity.y < input.y * ladderSpeed && isOnLadder())
+            rb.velocity = new Vector2(rb.velocity.x, input.y * ladderSpeed);
+
+        // X MOVEMENT WITH HOPS
+        if (input.sqrMagnitude > 0.05f)
         {
             sr.flipX = input.x < 0;
-            var movement = (Vector3)input * (moveSpeed * Time.fixedDeltaTime);
+            var movement = new Vector3(input.x, 0) * (moveSpeed * Time.fixedDeltaTime);
             transform.position += movement;
 
             lastHop += Time.fixedDeltaTime;
@@ -57,6 +69,7 @@ public class Pacman : MonoBehaviour
             }
         }
 
+        // Y MOVEMENT, JUMP
         if (inputJump && jumpCount < jumpHoldLimit)
         {
             if (jumpCount == 1 && rb.velocity.y > 0.05)
@@ -66,11 +79,13 @@ public class Pacman : MonoBehaviour
             // rb.AddForce(Vector2.up * jumpForce);
         }
 
-        if (transform.position.y > CamManager.camHeight / 1.5f && rb.velocity.y > 0)
+        // PREVENT FROM GOING TOO HIGH
+        if (transform.position.y > CamManager.camHeight / 1.2f && rb.velocity.y > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, -2);
         }
 
+        // RESTORE JUMP IF ON GROUND
         if (jumpCount != 1)
         {
             foreach (var tilemap in MapManager.levelTilemaps)
@@ -79,18 +94,37 @@ public class Pacman : MonoBehaviour
                 var southTile = tilemap.GetTile(southCheck);
                 // if (southTile is RuleTile ruleTile && ruleTile.m_DefaultColliderType != Tile.ColliderType.None &&
                 // Math.Abs(rb.velocity.y) < 0.1f)
-                if (Math.Abs(rb.velocity.y) < 0.1f && southTile != null)
+                if ((math.abs(input.y) < 0.05 && Math.Abs(rb.velocity.y) < 0.1f && southTile != null) ||
+                    (southTile is Tile && southTile.name == "Ladder"))
                 {
-                    // print("onGround!");
                     jumpCount = 1;
                 }
             }
         }
 
+        // FALLING OUT OF THE MAP CAUSE GAME OVER
         if (transform.position.y < -CamManager.camHeight / 1.8f)
         {
             Hit(999);
         }
+
+        // CLAMP -Y SPEED
+        var currentSpeed = rb.velocity;
+        rb.velocity = new Vector2(currentSpeed.x, math.max(-_velocityYMax, currentSpeed.y));
+    }
+
+    private bool isOnLadder()
+    {
+        foreach (var tilemap in MapManager.levelTilemaps)
+        {
+            var tile = tilemap.GetTile(tilemap.WorldToCell(transform.position));
+            if (tile is Tile && tile.name == "Ladder")
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -103,6 +137,10 @@ public class Pacman : MonoBehaviour
 
     public void Hit(int damage = 1)
     {
+        var now = Time.timeSinceLevelLoadAsDouble;
+        if (damage<999 && now - _lastHit < _invicibilityAfterHit)
+            return;
+        _lastHit = now;
         _animator.SetTrigger("Hit");
         _health -= damage;
         if (_health <= 0)
@@ -113,8 +151,8 @@ public class Pacman : MonoBehaviour
 
         for (var i = 1; i < _maxHealth + 1; i++)
         {
-            GameObject.Find("Heart" + i).GetComponent<SpriteRenderer>().color = Color.white.WithAlpha(
-                i <= _maxHealth - _health ? 0.35f : 1f);
+            GameObject.Find("Heart" + i).GetComponent<SpriteRenderer>().color =
+                new Color(1f, 1f, 1f, i <= _maxHealth - _health ? 0.35f : 1f);
         }
     }
 }

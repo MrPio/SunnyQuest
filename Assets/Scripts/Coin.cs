@@ -10,7 +10,7 @@ public class Coin : MonoBehaviour
     [SerializeField] private List<AudioClip> AudioClips;
     [SerializeField] private int _coinValue;
     private TextMeshProUGUI _coinCounter;
-    
+
     private AudioSource _audioSource;
     private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
 
@@ -24,9 +24,10 @@ public class Coin : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Pacman"))
         {
-            _audioSource.PlayOneShot(AudioClips[Random.Range(0,AudioClips.Count)]);
+            _audioSource.PlayOneShot(AudioClips[Random.Range(0, AudioClips.Count)]);
             Destroy(gameObject);
-            _inventoryManager.coins += 1;
-            _coinCounter.text = _inventoryManager.coins.ToString();
-        }    }
+            _inventoryManager.Coins += 1;
+            _coinCounter.text = _inventoryManager.Coins.ToString();
+        }
+    }
 }
