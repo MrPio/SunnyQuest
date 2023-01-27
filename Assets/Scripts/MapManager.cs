@@ -49,7 +49,7 @@ public class MapManager : MonoBehaviour
 
     private void NewLevel()
     {
-        var currentLevel=++_inventoryManager.CurrentLevel;
+        var currentLevel = ++_inventoryManager.CurrentLevel;
         var newLevel = Instantiate(levels[currentLevel - 1], grid.transform);
         var currentLevelSize = _inventoryManager.LevelsSize[currentLevel - 1];
         levelTilemaps.Add(newLevel.GetComponent<Tilemap>());
@@ -58,12 +58,19 @@ public class MapManager : MonoBehaviour
             rotation: Quaternion.identity
         );
         _instantiatedLevels.Add(newLevel);
-        var gate = Instantiate(
-            original: _gate,
-            position: new Vector2(lastSpawn + currentLevelSize.x * gridComponent.cellSize.x / 2f, 0),
-            rotation: Quaternion.identity
-        );
-        _inventoryManager.Gates.Add(gate);
+
+        // GATE SPAWNING
+        if (!_inventoryManager.RestLevels.Contains(currentLevel))
+        {
+            var gate = Instantiate(
+                original: _gate,
+                position: new Vector2(
+                    lastSpawn + currentLevelSize.x * gridComponent.cellSize.x - CamManager.camWidth / 2f, 0),
+                rotation: Quaternion.identity
+            );
+            _inventoryManager.Gates.Add(gate);
+        }
+
         lastSpawn += (currentLevelSize.x * gridComponent.cellSize.x);
         if (currentLevel > 1)
             _inventoryManager.SpawnedLevelsTotalSize +=

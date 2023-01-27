@@ -52,6 +52,10 @@ public class Pacman : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // SWITCHING COMMAND HANDLER IF THERE IS A MESSAGEBOX
+        if (_inventoryManager.IsThereMessageBox)
+            _inventoryManager.HandleMessageBox(input.x);
+
         // ON LADDER MOVEMENT
         if (math.abs(input.y) > 0.05 && rb.velocity.y < input.y * ladderSpeed && isOnLadder())
             rb.velocity = new Vector2(rb.velocity.x, input.y * ladderSpeed);
