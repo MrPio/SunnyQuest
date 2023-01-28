@@ -12,7 +12,7 @@ namespace DefaultNamespace.Model
             Cost = 6;
         }
 
-        public void Buy()
+        public override void Buy()
         {
             base.Buy();
             var Pacman = GameObject.FindWithTag("Pacman").GetComponent<Pacman>();

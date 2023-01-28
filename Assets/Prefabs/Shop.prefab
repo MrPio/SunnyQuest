@@ -769,6 +769,8 @@ MonoBehaviour:
   NameText: {fileID: 97620913428725506}
   MercantImage: {fileID: 97620914833434342}
   arrowMoveSound: {fileID: 8300000, guid: badc6814a46e3214592f605a9678c4e6, type: 3}
+  buySound: {fileID: 8300000, guid: 82edfb7ab9e426442a3423d6d06c18a2, type: 3}
+  noBuySound: {fileID: 8300000, guid: 6c9cc9b97ead45a4a9f4ddbfa5fc5e0a, type: 3}
 --- !u!1 &97620914344910781
 GameObject:
   m_ObjectHideFlags: 0

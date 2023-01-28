@@ -11,13 +11,14 @@ namespace DefaultNamespace.Model
         public String SpriteCut;
         public String Message;
         public int Cost;
-        protected InventoryManager _inventoryManager = InventoryManager.getInstance;
 
-        public void Buy()
-        {
-            _inventoryManager.Coins -= Cost;
+        private static InventoryManager InventoryManager => InventoryManager.getInstance;
+
+        public virtual  void Buy()
+            {
+            InventoryManager.Coins -= Cost;
             GameObject.FindWithTag("CoinCounter").GetComponent<TextMeshProUGUI>().text =
-                _inventoryManager.Coins.ToString();
+                InventoryManager.Coins.ToString();
         }
     }
 }

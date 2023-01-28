@@ -10,7 +10,7 @@ namespace DefaultNamespace
     {
         private static InventoryManager _instance;
         public List<GameObject> Gates = new();
-        public int Coins, Stars = 0;
+        public int Coins=0, Stars = 0;
         public int CurrentLevel;
         public GameObject MessageBox = null;
         public Shop Shop;
