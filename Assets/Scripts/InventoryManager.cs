@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using DefaultNamespace.Model;
+using TMPro;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -10,9 +12,10 @@ namespace DefaultNamespace
         public List<GameObject> Gates = new();
         public int Coins, Stars = 0;
         public int CurrentLevel;
-        public GameObject MessageBox=null;
+        public GameObject MessageBox = null;
         public Shop Shop;
-        public bool IsThereMessageBox=false;
+        public bool IsThereMessageBox = false;
+        public float LastSpacebarMessageBox = 0;
 
         public List<Vector2> LevelsSize = new()
         {
@@ -48,10 +51,13 @@ namespace DefaultNamespace
             new Vector2(18, 10), //30
         };
 
-        public List<int> RestLevels = new() { 5, 10, 14 };
-
-
+        public List<int> RestLevels = new() { 1, 5, 10, 14 };
         public float SpawnedLevelsTotalSize, VisitedLevels;
+
+        public List<MercantModel> MercantModels = new()
+        {
+            new Cornetto(), new Marmo(), new Gino()
+        };
 
         public static InventoryManager getInstance
         {
@@ -73,16 +79,19 @@ namespace DefaultNamespace
             Gates.RemoveAt(0);
         }
 
-        public void HandleMessageBox(float xInput)
+        public void HandleMessageBox(float xInput, bool spaceBar)
         {
+            if (spaceBar)
+            {
+                Shop.Confirm();
+                LastSpacebarMessageBox = Time.timeSinceLevelLoad;
+                return;
+            }
+
             if (xInput > 0.05)
-            {
-                
-            }
+                Shop.SetRightArrow();
             else if (xInput < -0.05)
-            {
-                
-            }
+                Shop.SetLeftArrow();
         }
     }
 }

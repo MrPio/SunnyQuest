@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5403133668955546592}
   m_Layer: 0
   m_Name: Mercant
-  m_TagString: Untagged
+  m_TagString: Mercant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,7 +110,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.14, y: 1.63}
+  m_Size: {x: 1.39, y: 0.89}
   m_EdgeRadius: 0
 --- !u!114 &5403133668955546592
 MonoBehaviour:
@@ -124,3 +124,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1544e2e9b87f5aa4782bcb320e422450, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _messageBox: {fileID: 97620914195571808, guid: d45a8f72ea1a7c847a14c41b79d2bdfa, type: 3}
+  _soSpriteRenderer: {fileID: 1756927906991500622}

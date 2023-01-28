@@ -3,6 +3,7 @@ using DefaultNamespace;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
@@ -19,8 +20,8 @@ public class Pacman : MonoBehaviour
     [SerializeField] private float _hopRate = 1;
     [SerializeField] private float _hopStrenght = 10;
     [SerializeField] private Animator _animator;
-    [SerializeField] private int _maxHealth = 3;
-    [SerializeField] private int _health = 3;
+    [SerializeField] public int MaxHealth = 3;
+    [SerializeField] public int Health = 3;
     [SerializeField] private GameObject _gameOverScreen;
     [SerializeField] private float _velocityYMax = 8f;
     [SerializeField] private float _invicibilityAfterHit = 3f;
@@ -44,17 +45,18 @@ public class Pacman : MonoBehaviour
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
         inputJump = Input.GetKey(KeyCode.Space);
-        /*if (!inputJump && jumpCount != 1)
-        {
-            jumpCount = 1;
-        }*/
+        if (Time.timeSinceLevelLoad - _inventoryManager.LastSpacebarMessageBox < 0.6f)
+            inputJump = false;
     }
 
     private void FixedUpdate()
     {
         // SWITCHING COMMAND HANDLER IF THERE IS A MESSAGEBOX
         if (_inventoryManager.IsThereMessageBox)
-            _inventoryManager.HandleMessageBox(input.x);
+        {
+            _inventoryManager.HandleMessageBox(input.x, inputJump);
+            return;
+        }
 
         // ON LADDER MOVEMENT
         if (math.abs(input.y) > 0.05 && rb.velocity.y < input.y * ladderSpeed && isOnLadder())
@@ -154,17 +156,22 @@ public class Pacman : MonoBehaviour
             return;
         _lastHit = now;
         _animator.SetTrigger("Hit");
-        _health -= damage;
-        if (_health <= 0)
+        Health -= damage;
+        if (Health <= 0)
         {
             Instantiate(_gameOverScreen, GameObject.FindWithTag("Canvas").transform);
             Destroy(gameObject);
         }
 
-        for (var i = 1; i < _maxHealth + 1; i++)
+        UpdateHeartsIcons();
+    }
+
+    public void UpdateHeartsIcons()
+    {
+        for (var i = 1; i < MaxHealth + 1; i++)
         {
             GameObject.Find("Heart" + i).GetComponent<SpriteRenderer>().color =
-                new Color(1f, 1f, 1f, i <= _maxHealth - _health ? 0.35f : 1f);
+                new Color(1f, 1f, 1f, i <= MaxHealth - Health ? 0.35f : 1f);
         }
     }
 }

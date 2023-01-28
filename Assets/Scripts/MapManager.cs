@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Utilies;
 
 public class MapManager : MonoBehaviour
 {
@@ -24,7 +26,6 @@ public class MapManager : MonoBehaviour
         NewLevel();
     }
 
-    // Update is called once per frame
     private void FixedUpdate()
     {
         if (transform.position.x + CamManager.camWidth > lastSpawn)
@@ -59,7 +60,8 @@ public class MapManager : MonoBehaviour
         );
         _instantiatedLevels.Add(newLevel);
 
-        // GATE SPAWNING
+
+        // GATE SPAWNING AND SHOP INITIALIZE
         if (!_inventoryManager.RestLevels.Contains(currentLevel))
         {
             var gate = Instantiate(
@@ -70,11 +72,26 @@ public class MapManager : MonoBehaviour
             );
             _inventoryManager.Gates.Add(gate);
         }
+        else
+            InitializeShops(GameObject.FindGameObjectsWithTag("Mercant"));
 
         lastSpawn += (currentLevelSize.x * gridComponent.cellSize.x);
         if (currentLevel > 1)
             _inventoryManager.SpawnedLevelsTotalSize +=
                 _inventoryManager.LevelsSize[currentLevel - 2].x * gridComponent.cellSize.x;
         print($"*** Added level ***");
+    }
+
+    private void InitializeShops(GameObject[] shops)
+    {
+        var shuffledShops = shops.ToList();
+        ListsOperation.Shuffle(shuffledShops);
+
+        var count = 0;
+        foreach (var merchantScript in shuffledShops.Select(shop => shop.GetComponent<Mercant>()))
+        {
+            merchantScript.Model = _inventoryManager.MercantModels[count++];
+            merchantScript.Initialize();
+        }
     }
 }
