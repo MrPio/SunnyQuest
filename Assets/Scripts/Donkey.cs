@@ -4,6 +4,7 @@ using UnityEngine;
 public class Donkey : MonoBehaviour
 {
     [SerializeField] private AnimationCurve SlidingCurve;
+    [SerializeField] private Animator animator;
     [SerializeField] private float Speed = 1;
     private Pacman _pacman;
     
@@ -29,5 +30,15 @@ public class Donkey : MonoBehaviour
         {
             _pacman.Hit();
         }
+    }
+
+    public void Hit()
+    {
+        animator.SetTrigger("Die");
+    }
+
+    private void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

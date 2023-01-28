@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -25,6 +28,10 @@ public class Pacman : MonoBehaviour
     [SerializeField] private GameObject _gameOverScreen;
     [SerializeField] private float _velocityYMax = 8f;
     [SerializeField] private float _invicibilityAfterHit = 3f;
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private List<AudioClip> hopClips;
+    [SerializeField] private List<AudioClip> hitClips;
+    [SerializeField] private List<AudioClip> callClips;
 
     private Vector2 input;
     private bool inputJump;
@@ -33,11 +40,15 @@ public class Pacman : MonoBehaviour
     private int coins = 0;
     private float lastHop = 0;
     private double _lastHit;
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
+    private Vector2 _backupPosition;
+    private float _lastJump;
 
     private void Start()
     {
         bounds = bc.bounds;
+        UpdateHeartsIcons();
+        _backupPosition = transform.position;
     }
 
     private void Update()
@@ -59,7 +70,7 @@ public class Pacman : MonoBehaviour
         }
 
         // ON LADDER MOVEMENT
-        if (math.abs(input.y) > 0.05 && rb.velocity.y < input.y * ladderSpeed && isOnLadder())
+        if (math.abs(input.y) > 0.05 && rb.velocity.y < input.y * ladderSpeed && isOnTile("Ladder"))
             rb.velocity = new Vector2(rb.velocity.x, input.y * ladderSpeed);
 
         // X MOVEMENT WITH HOPS
@@ -75,27 +86,41 @@ public class Pacman : MonoBehaviour
             {
                 lastHop = 0;
                 rb.AddForce(Vector2.up * _hopStrenght);
+                CamManager.AudioSource.PlayOneShot(hopClips[Random.Range(0, hopClips.Count)]);
             }
         }
 
         // VISITED LEVELS
         if ((int)_inventoryManager.VisitedLevels != (int)_inventoryManager.SpawnedLevelsTotalSize &&
             transform.position.x + CamManager.camWidth / 2 >= _inventoryManager.SpawnedLevelsTotalSize)
+        {
             _inventoryManager.VisitedLevels = _inventoryManager.SpawnedLevelsTotalSize;
+            ++_inventoryManager.CurrentLevel;
+            GameObject.FindWithTag("LevelProgress").GetComponent<TextMeshProUGUI>().text =
+                $"{_inventoryManager.CurrentLevel}/" +
+                $"{_inventoryManager.LevelsSize.Count}";
+        }
 
         // Y MOVEMENT, JUMP
         if (inputJump && jumpCount < jumpHoldLimit)
         {
             if (jumpCount == 1 && rb.velocity.y > 0.05)
                 rb.velocity = new Vector2(rb.velocity.x, 0);
+            if (jumpCount == 1 && Time.timeSinceLevelLoad - _lastJump > 0.4f)
+            {
+                CamManager.AudioSource.PlayOneShot(jumpClip);
+                _lastJump = Time.timeSinceLevelLoad;
+            }
+
             ++jumpCount;
             rb.velocity += Vector2.up * jumpForce;
-            // rb.AddForce(Vector2.up * jumpForce);
         }
 
         // PREVENT FROM GOING TOO HIGH
-        if (transform.position.y > CamManager.camHeight / 1.2f && rb.velocity.y > 0)
+        if (transform.position.y > _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1].y -
+            CamManager.camHeight / 2f && rb.velocity.y > 0)
         {
+            print("Too high!");
             rb.velocity = new Vector2(rb.velocity.x, -2);
         }
 
@@ -106,20 +131,24 @@ public class Pacman : MonoBehaviour
             {
                 var southCheck = tilemap.WorldToCell(transform.position) + Vector3Int.down;
                 var southTile = tilemap.GetTile(southCheck);
-                // if (southTile is RuleTile ruleTile && ruleTile.m_DefaultColliderType != Tile.ColliderType.None &&
-                // Math.Abs(rb.velocity.y) < 0.1f)
-                if ((math.abs(input.y) < 0.05 && Math.Abs(rb.velocity.y) < 0.1f && southTile != null) ||
-                    (southTile is Tile && southTile.name == "Ladder"))
+
+                // IF STANDING STILL ON TILE
+                if (math.abs(input.y) < 0.05 && Math.Abs(rb.velocity.y) < 0.1f && southTile != null)
                 {
                     jumpCount = 1;
+                    _backupPosition = transform.position;
                 }
+                // IF ON LADDER
+                else if (southTile is Tile && southTile.name == "Ladder")
+                    jumpCount = 1;
             }
         }
 
-        // FALLING OUT OF THE MAP CAUSE GAME OVER
-        if (transform.position.y < -CamManager.camHeight / 1.8f)
+        // FALLING OUT OF THE MAP TELEPORT THE PACMAN BACK
+        if (transform.position.y < -CamManager.camHeight / 1.8f || isOnTile("Sea"))
         {
-            Hit(999);
+            Hit();
+            transform.position = _backupPosition;
         }
 
         // CLAMP -Y SPEED
@@ -127,18 +156,10 @@ public class Pacman : MonoBehaviour
         rb.velocity = new Vector2(currentSpeed.x, math.max(-_velocityYMax, currentSpeed.y));
     }
 
-    private bool isOnLadder()
+    private bool isOnTile(string tileName)
     {
-        foreach (var tilemap in MapManager.levelTilemaps)
-        {
-            var tile = tilemap.GetTile(tilemap.WorldToCell(transform.position));
-            if (tile is Tile && tile.name == "Ladder")
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return MapManager.levelTilemaps.Select(tilemap => tilemap.GetTile(tilemap.WorldToCell(transform.position)))
+            .Any(tile => tile is Tile or AnimatedTile && tile.name == tileName);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -154,6 +175,7 @@ public class Pacman : MonoBehaviour
         var now = Time.timeSinceLevelLoadAsDouble;
         if (damage < 999 && now - _lastHit < _invicibilityAfterHit)
             return;
+        CamManager.AudioSource.PlayOneShot(hitClips[Random.Range(0, hitClips.Count)]);
         _lastHit = now;
         _animator.SetTrigger("Hit");
         Health -= damage;

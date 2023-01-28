@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using UnityEngine;
 
 public class CloudManager : MonoBehaviour
@@ -6,6 +7,8 @@ public class CloudManager : MonoBehaviour
     [SerializeField] private float _cloudsRate = 1f;
     [SerializeField] private Rigidbody2D _target;
     private float _nextCloud, _elapsed;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
+
 
     private void Start()
     {
@@ -25,9 +28,14 @@ public class CloudManager : MonoBehaviour
                 return;
             }
 
+            var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel];
+
             var cloud = Instantiate(_cloud, transform);
             var xPos = CamManager.mainCam.transform.position.x + CamManager.camWidth * 0.65f;
-            var yPos = Random.Range(-CamManager.camHeight * 0.15f, CamManager.camHeight * 0.55f);
+            var yPos = Random.Range(
+                minInclusive: -CamManager.camHeight * 0.15f,
+                maxInclusive: levelSize.y - CamManager.camHeight * 0.45f
+            );
             cloud.transform.position = new Vector3(xPos, yPos);
         }
     }

@@ -17,7 +17,7 @@ public class Shop : MonoBehaviour
     [SerializeField] private AudioClip noBuySound;
     private AudioSource _audioSource;
     private bool answer = true;
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
     public MercantModel Model;
 
     private void Start()

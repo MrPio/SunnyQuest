@@ -9,7 +9,7 @@ public class Mercant : MonoBehaviour
     [SerializeField] private SpriteRenderer _soSpriteRenderer;
 
     private Transform _canvas;
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
 
     private void Start()
     {

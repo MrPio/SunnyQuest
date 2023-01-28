@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DefaultNamespace.Model;
-using TMPro;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -9,15 +7,16 @@ namespace DefaultNamespace
     public class InventoryManager
     {
         private static InventoryManager _instance;
-        public List<GameObject> Gates = new();
+        public readonly List<GameObject> Gates = new();
         public int Coins=0, Stars = 0;
-        public int CurrentLevel;
+        public int LastSpawnedLevel,CurrentLevel=1;
+        public float SpawnedLevelsTotalSize, VisitedLevels;
         public GameObject MessageBox = null;
         public Shop Shop;
         public bool IsThereMessageBox = false;
         public float LastSpacebarMessageBox = 0;
 
-        public List<Vector2> LevelsSize = new()
+        public readonly List<Vector2> LevelsSize = new()
         {
             new Vector2(18, 10), //1
             new Vector2(18, 10),
@@ -33,7 +32,7 @@ namespace DefaultNamespace
             new Vector2(18, 10),
             new Vector2(18, 10),
             new Vector2(33, 10),
-            new Vector2(18, 10), //15
+            new Vector2(23, 23), //15
             new Vector2(18, 10),
             new Vector2(18, 10),
             new Vector2(18, 10),
@@ -51,15 +50,24 @@ namespace DefaultNamespace
             new Vector2(18, 10), //30
         };
 
-        public List<int> RestLevels = new() { 1, 5, 10, 14 };
-        public float SpawnedLevelsTotalSize, VisitedLevels;
+        public readonly List<int> RestLevels = new() { 5, 10, 14 };
 
-        public List<MercantModel> MercantModels = new()
+        public readonly List<float> ChicchettiRate = new()
+        {
+            0, 0, 0, 0, 10,
+            10, 9, 9, 8, 8,
+            8, 7, 7, 6,
+            6, 6, 6, 5.5f, 5.5f,
+            5, 5, 5, 4.5f, 4.5f,
+            4.5f, 4, 4, 3.5f, 2,
+        };
+
+        public readonly List<MercantModel> MercantModels = new()
         {
             new Cornetto(), new Marmo(), new Gino()
         };
 
-        public static InventoryManager getInstance
+        public static InventoryManager GetInstance
         {
             get { return _instance ??= new InventoryManager(); }
         }

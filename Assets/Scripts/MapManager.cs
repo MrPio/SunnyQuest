@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Utilies;
 
@@ -9,18 +10,17 @@ public class MapManager : MonoBehaviour
 {
     public static List<Tilemap> levelTilemaps = new();
 
-    public GameObject grid;
     public List<GameObject> levels;
-    [SerializeField] private GameObject _gate;
+    [SerializeField] private GameObject gate;
 
     private float lastSpawn;
     private Grid gridComponent;
     private readonly List<GameObject> _instantiatedLevels = new();
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
 
     private void Awake()
     {
-        gridComponent = grid.GetComponent<Grid>();
+        gridComponent = GetComponent<Grid>();
         foreach (var g in GameObject.FindGameObjectsWithTag("EditorOnly"))
             Destroy(g);
         NewLevel();
@@ -28,16 +28,16 @@ public class MapManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (transform.position.x + CamManager.camWidth > lastSpawn)
+        if (CamManager.mainCam.transform.position.x + CamManager.camWidth > lastSpawn)
         {
             NewLevel();
 
-            var currentLevelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1];
+            var currentLevelSize = _inventoryManager.LevelsSize[_inventoryManager.LastSpawnedLevel - 1];
             // REMOVING OLD LEVELS
             for (var i = _instantiatedLevels.Count - 1; i >= 0; --i)
             {
                 if (_instantiatedLevels[i].transform.position.x + (currentLevelSize.x * gridComponent.cellSize.x) <
-                    transform.position.x)
+                    CamManager.mainCam.transform.position.x)
                 {
                     print($"*** Removed level {i} ***");
                     Destroy(_instantiatedLevels[i]);
@@ -50,8 +50,9 @@ public class MapManager : MonoBehaviour
 
     private void NewLevel()
     {
-        var currentLevel = ++_inventoryManager.CurrentLevel;
-        var newLevel = Instantiate(levels[currentLevel - 1], grid.transform);
+        var currentLevel = ++_inventoryManager.LastSpawnedLevel;
+        print($"*** CurrentLevel={currentLevel} ***");
+        var newLevel = Instantiate(levels[currentLevel - 1], transform);
         var currentLevelSize = _inventoryManager.LevelsSize[currentLevel - 1];
         levelTilemaps.Add(newLevel.GetComponent<Tilemap>());
         newLevel.transform.SetPositionAndRotation(
@@ -64,13 +65,13 @@ public class MapManager : MonoBehaviour
         // GATE SPAWNING AND SHOP INITIALIZE
         if (!_inventoryManager.RestLevels.Contains(currentLevel))
         {
-            var gate = Instantiate(
-                original: _gate,
+            var newGate = Instantiate(
+                original: gate,
                 position: new Vector2(
                     lastSpawn + currentLevelSize.x * gridComponent.cellSize.x - CamManager.camWidth / 2f, 0),
                 rotation: Quaternion.identity
             );
-            _inventoryManager.Gates.Add(gate);
+            _inventoryManager.Gates.Add(newGate);
         }
         else
             InitializeShops(GameObject.FindGameObjectsWithTag("Mercant"));

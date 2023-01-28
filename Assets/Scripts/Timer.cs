@@ -17,7 +17,7 @@ public class Timer : MonoBehaviour
 
 
     private float _elapsed,_lastCheck;
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
     private bool _shortage;
 
     private void Start()
@@ -38,7 +38,7 @@ public class Timer : MonoBehaviour
             return;
         _lastCheck = _elapsed;
         
-        var totDuration = _levelsDuration[_inventoryManager.CurrentLevel - 1];
+        var totDuration = _levelsDuration[_inventoryManager.LastSpawnedLevel - 1];
         var remaining = totDuration - _elapsed;
 
         // TIME'S UP!

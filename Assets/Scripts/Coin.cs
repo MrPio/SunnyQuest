@@ -12,7 +12,7 @@ public class Coin : MonoBehaviour
     private TextMeshProUGUI _coinCounter;
 
     private AudioSource _audioSource;
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
 
     private void Start()
     {

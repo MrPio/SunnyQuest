@@ -12,7 +12,7 @@ namespace DefaultNamespace.Model
         public String Message;
         public int Cost;
 
-        private static InventoryManager InventoryManager => InventoryManager.getInstance;
+        private static InventoryManager InventoryManager => InventoryManager.GetInstance;
 
         public virtual  void Buy()
             {

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2278316712049959743}
   m_Layer: 0
   m_Name: Donkey
-  m_TagString: Untagged
+  m_TagString: Donkey
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -170,6 +170,7 @@ MonoBehaviour:
     m_PreInfinity: 0
     m_PostInfinity: 0
     m_RotationOrder: 4
+  animator: {fileID: 8844359457347715157}
   Speed: 0.25
 --- !u!61 &2278316712049959743
 BoxCollider2D:

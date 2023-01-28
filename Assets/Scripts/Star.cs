@@ -11,7 +11,7 @@ public class Star : MonoBehaviour
     [SerializeField] private List<AudioClip> AudioClips;
 
     private AudioSource _audioSource;
-    private readonly InventoryManager _inventoryManager = InventoryManager.getInstance;
+    private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
     private Timer _timer;
 
     private void Start()
