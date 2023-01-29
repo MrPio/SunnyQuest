@@ -36,12 +36,12 @@ public class Chicchetto : MonoBehaviour
     private void Start()
     {
         _pacman = GameObject.FindWithTag("Pacman");
-        var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel];
-
+        // var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel];
+        
         var xPos = MainCam.transform.position.x + CamManager.camWidth * 0.6f;
-        var yPos = Random.Range(
-            minInclusive: levelSize.y - CamManager.camHeight * 0.65f,
-            maxInclusive: levelSize.y - CamManager.camHeight * 0.55f
+        var yPos = CamManager.mainCam.transform.position.y+Random.Range(
+            minInclusive: CamManager.camHeight * 0.15f,
+            maxInclusive: CamManager.camHeight * 0.45f
         );
         transform.position = new Vector2(xPos, yPos);
         rigidbody2D.velocity = Vector2.left * speed*_speedFactor[_inventoryManager.GameDifficulty];
@@ -80,6 +80,10 @@ public class Chicchetto : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("Pacman"))
+        {
             _pacman.GetComponent<Pacman>().Hit();
+            print("*** damage chicchetto touch ***");
+
+        }
     }
 }

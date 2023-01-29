@@ -13,7 +13,7 @@ public class Donkey : MonoBehaviour
     private Dictionary<InventoryManager.Difficulty, float> _difficultyFactor =
         new()
         {
-            { InventoryManager.Difficulty.Hard, 1.4f },
+            { InventoryManager.Difficulty.Hard, 1.35f },
             { InventoryManager.Difficulty.Medium, 1f },
             { InventoryManager.Difficulty.Easy, 0.75f }
         };
@@ -25,6 +25,10 @@ public class Donkey : MonoBehaviour
     {
         _startPosition = transform.position;
         _pacman = GameObject.FindGameObjectWithTag("Pacman").GetComponent<Pacman>();
+    }
+
+    public void Initialize()
+    {
         Speed *= _difficultyFactor[InventoryManager.GetInstance.GameDifficulty];
     }
 
@@ -40,6 +44,7 @@ public class Donkey : MonoBehaviour
         if (col.gameObject.CompareTag("Pacman"))
         {
             _pacman.Hit();
+            print("*** damage donkey ***");
         }
     }
 

@@ -28,18 +28,21 @@ public class MapManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (CamManager.mainCam.transform.position.x + CamManager.camWidth > lastSpawn)
+        if (CamManager.mainCam.transform.position.x + CamManager.camWidth > lastSpawn &&
+            _inventoryManager.CurrentLevel < _inventoryManager.LevelsSize.Count)
         {
             NewLevel();
 
-            var currentLevelSize = _inventoryManager.LevelsSize[_inventoryManager.LastSpawnedLevel - 1];
             // REMOVING OLD LEVELS
             for (var i = _instantiatedLevels.Count - 1; i >= 0; --i)
             {
+                var currentLevelSize =
+                    _inventoryManager.LevelsSize[_inventoryManager.LastSpawnedLevel -
+                                                 (_instantiatedLevels.Count - i)];
                 if (_instantiatedLevels[i].transform.position.x + (currentLevelSize.x * gridComponent.cellSize.x) <
                     CamManager.mainCam.transform.position.x)
                 {
-                    print($"*** Removed level {i} ***");
+                    // print($"*** Removed level {i} ***");
                     Destroy(_instantiatedLevels[i]);
                     _instantiatedLevels.RemoveAt(i);
                     levelTilemaps.RemoveAt(i);
@@ -79,7 +82,10 @@ public class MapManager : MonoBehaviour
         if (currentLevel > 1)
             _inventoryManager.SpawnedLevelsTotalSize +=
                 _inventoryManager.LevelsSize[currentLevel - 2].x * gridComponent.cellSize.x;
-        print($"*** Added level ***");
+        // print($"*** Added level ***");
+        
+        // CHICCHETTIMANAGER INITIALIZE
+        GameObject.FindWithTag("ChicchettiManager").GetComponent<ChicchettiManager>().SetSpawnTime();
     }
 
     private void InitializeShops(GameObject[] shops)

@@ -43,6 +43,7 @@ public class Pacman : MonoBehaviour
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
     private Vector2 _backupPosition;
     private float _lastJump;
+
     private Dictionary<InventoryManager.Difficulty, float> _speedFactor =
         new()
         {
@@ -50,11 +51,15 @@ public class Pacman : MonoBehaviour
             { InventoryManager.Difficulty.Medium, 1f },
             { InventoryManager.Difficulty.Easy, 0.9f }
         };
+
     private void Start()
     {
         bounds = bc.bounds;
-        UpdateHeartsIcons();
         _backupPosition = transform.position;
+    }
+
+    public void Initialize()
+    {
         moveSpeed *= _speedFactor[_inventoryManager.GameDifficulty];
     }
 
@@ -69,6 +74,8 @@ public class Pacman : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_inventoryManager.GameStarted)
+            return;
         // SWITCHING COMMAND HANDLER IF THERE IS A MESSAGEBOX
         if (_inventoryManager.IsThereMessageBox)
         {
@@ -128,7 +135,7 @@ public class Pacman : MonoBehaviour
         if (transform.position.y > _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1].y -
             CamManager.camHeight / 2f + 1.5f && rb.velocity.y > 0)
         {
-            print("Too high!");
+            // print("Too high!");
             rb.velocity = new Vector2(rb.velocity.x, -2);
         }
 
@@ -156,6 +163,8 @@ public class Pacman : MonoBehaviour
         if (transform.position.y < -CamManager.camHeight / 1.8f || isOnTile("Sea"))
         {
             Hit();
+            print("*** damage out of map ***");
+
             transform.position = _backupPosition;
         }
 

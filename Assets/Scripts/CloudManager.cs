@@ -31,10 +31,15 @@ public class CloudManager : MonoBehaviour
             var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel];
 
             var cloud = Instantiate(_cloud, transform);
-            var xPos = CamManager.mainCam.transform.position.x + CamManager.camWidth * 0.65f;
-            var yPos = Random.Range(
+            var camPos = CamManager.mainCam.transform.position;
+            var xPos = camPos.x + CamManager.camWidth * 0.65f;
+            /*var yPos = Random.Range(
                 minInclusive: -CamManager.camHeight * 0.15f,
                 maxInclusive: levelSize.y - CamManager.camHeight * 0.45f
+            );*/
+            var yPos = camPos.y+Random.Range(
+                minInclusive: -CamManager.camHeight * 0.15f,
+                maxInclusive: CamManager.camHeight * 0.45f
             );
             cloud.transform.position = new Vector3(xPos, yPos);
         }

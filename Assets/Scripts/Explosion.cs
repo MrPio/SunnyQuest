@@ -19,7 +19,11 @@ public class Explosion : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("Pacman"))
+        {
             col.gameObject.GetComponent<Pacman>().Hit();
+            print("*** damage explosion ***");
+
+        }
         else if (col.gameObject.CompareTag("Donkey"))
             col.gameObject.GetComponent<Donkey>().Hit();
     }

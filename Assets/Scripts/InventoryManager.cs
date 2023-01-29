@@ -17,6 +17,7 @@ namespace DefaultNamespace
         public Shop Shop;
         public bool IsThereMessageBox;
         public float LastSpacebarMessageBox;
+        public bool GameStarted = false;
 
         public enum Difficulty
         {
@@ -34,6 +35,7 @@ namespace DefaultNamespace
                 { Difficulty.Medium, 1.4f },
                 { Difficulty.Easy, 1f }
             };
+
         private Dictionary<Difficulty, int> _healthFactor =
             new()
             {
@@ -70,17 +72,16 @@ namespace DefaultNamespace
         };
 
         public readonly List<int> RestLevels = new() { 5, 10, 14, 18 };
-        public readonly List<int> CrazyLevels = new() { 9, 20 };
+        public readonly List<int> CrazyLevels = new() { 9, 21 };
         public int Points;
 
         public readonly List<float> ChicchettiRate = new()
         {
-            0, 0, 0, 0, 10,
-            10, 9, 9, 8, 8,
-            8, 7, 7, 6,
-            6, 6, 6, 5.5f, 5.5f,
-            5, 5, 5, 4.5f, 4.5f,
-            4.5f, 4, 4, 3.5f, 2,
+            0, 0, 0, 0, 0,
+            8, 7, 7, 8, 0,
+            6, 5, 6, 0,
+            6, 5, 6, 5.5f, 5.5f,
+            4, 7, 4, 0,
         };
 
         public readonly List<MercantModel> MercantModels = new()
@@ -158,18 +159,21 @@ namespace DefaultNamespace
             var go = Instantiate(points, GameObject.FindWithTag("Canvas").transform);
             go.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = $"+ {toAdd} pts";
             go.transform.position = GameObject.FindWithTag("Pacman").transform.position + Vector3.up * 0.5f;
-            print($"*****{go.transform.position}****");
+            // print($"*****{go.transform.position}****");
         }
 
         public void InitializeGame()
         {
-            GameObject.FindWithTag("Health").SetActive(true);
-            GameObject.FindWithTag("Timer").SetActive(true);
-            GameObject.FindWithTag("CoinsCount").SetActive(true);
-            GameObject.FindWithTag("TutorialStar").SetActive(true);
-            var pacman=GameObject.FindWithTag("Pacman").GetComponent<Pacman>();
+            foreach (var gameObject in GameObject.FindWithTag("Canvas").GetComponent<CanvasManager>().Children)
+                gameObject.SetActive(true);
+
+            var pacman = GameObject.FindWithTag("Pacman").GetComponent<Pacman>();
             pacman.Health = _healthFactor[GameDifficulty];
             pacman.UpdateHeartsIcons();
+            pacman.Initialize();
+            foreach (var donkey in GameObject.FindGameObjectsWithTag("Donkey"))
+                donkey.GetComponent<Donkey>().Initialize();
+            Destroy(GameObject.FindWithTag("NewGame"));
         }
     }
 }

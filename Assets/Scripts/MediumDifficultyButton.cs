@@ -15,5 +15,6 @@ public class MediumDifficultyButton : MonoBehaviour
     {
         InventoryManager.GetInstance.GameDifficulty = InventoryManager.Difficulty.Medium;
         InventoryManager.GetInstance.InitializeGame();
+        
     }
 }

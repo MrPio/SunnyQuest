@@ -12,12 +12,10 @@ public class Star : MonoBehaviour
 
     private AudioSource _audioSource;
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
-    private Timer _timer;
 
     private void Start()
     {
         _audioSource = CamManager.mainCam.GetComponent<AudioSource>();
-        _timer = GameObject.FindWithTag("Timer").GetComponent<Timer>();
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -28,7 +26,7 @@ public class Star : MonoBehaviour
             Destroy(gameObject);
             Destroy(_inventoryManager.Gates[0]);
             _inventoryManager.CollectStar();
-            _timer.NewLevel();
+            GameObject.FindWithTag("Timer").GetComponent<Timer>().NewLevel();
             InventoryManager.GetInstance.CollectPoints(typeof(Star));
         }
     }

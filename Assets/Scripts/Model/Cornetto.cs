@@ -9,7 +9,7 @@ namespace DefaultNamespace.Model
             Sprite = "Images/Cornetto";
             SpriteCut = "Images/CornettoCut";
             Message = "Hey there! Why not take a rest? Wanna buy a +1 HP?";
-            BaseCost = 6;
+            BaseCost = 9;
         }
 
         public override void Buy()

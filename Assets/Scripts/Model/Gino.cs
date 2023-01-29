@@ -9,7 +9,7 @@ namespace DefaultNamespace.Model
             Sprite = "Images/Gino";
             SpriteCut = "Images/GinoCut";
             Message = "Wuzzup! Aren't you tired of yer little jumps? Wanna buy a +1 JMP?";
-            BaseCost = 14;
+            BaseCost = 18;
         }
 
         public override void Buy()

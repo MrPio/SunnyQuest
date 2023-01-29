@@ -9,7 +9,6 @@ public class Coin : MonoBehaviour
 {
     [SerializeField] private List<AudioClip> AudioClips;
     [SerializeField] private int _coinValue;
-    private TextMeshProUGUI _coinCounter;
 
     private AudioSource _audioSource;
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
@@ -17,7 +16,6 @@ public class Coin : MonoBehaviour
     private void Start()
     {
         _audioSource = CamManager.mainCam.GetComponent<AudioSource>();
-        _coinCounter = GameObject.FindWithTag("CoinCounter").GetComponent<TextMeshProUGUI>();
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -28,7 +26,7 @@ public class Coin : MonoBehaviour
             Destroy(gameObject);
             _inventoryManager.Coins += 1;
             _inventoryManager.CollectPoints(typeof(Coin));
-            _coinCounter.text = _inventoryManager.Coins.ToString();
+            GameObject.FindWithTag("CoinCounter").GetComponent<TextMeshProUGUI>().text = _inventoryManager.Coins.ToString();
         }
     }
 }

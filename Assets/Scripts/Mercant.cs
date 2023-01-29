@@ -27,7 +27,7 @@ public class Mercant : MonoBehaviour
         {
             if (_inventoryManager.IsThereMessageBox)
                 return;
-            if(Time.timeSinceLevelLoad-_inventoryManager.LastSpacebarMessageBox<2f)
+            if(Time.timeSinceLevelLoad-_inventoryManager.LastSpacebarMessageBox<1f)
                 return;
             _inventoryManager.MessageBox = Instantiate(_messageBox, _canvas);
             _inventoryManager.IsThereMessageBox = true;

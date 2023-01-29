@@ -9,7 +9,7 @@ namespace DefaultNamespace.Model
             Sprite = "Images/Marmo";
             SpriteCut = "Images/MarmoCut";
             Message = "Meoow! Speed is everyFURRing! Wanna buy a +1 SPD?";
-            BaseCost = 10;
+            BaseCost = 15;
         }
 
         public override void Buy()

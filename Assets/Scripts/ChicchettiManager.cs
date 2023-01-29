@@ -9,15 +9,23 @@ public class ChicchettiManager : MonoBehaviour
     private float _nextSpawn, _elapsed;
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
 
+    private Dictionary<InventoryManager.Difficulty, float> _spawnFactor =
+        new()
+        {
+            { InventoryManager.Difficulty.Hard, 1.1f },
+            { InventoryManager.Difficulty.Medium, 0.85f },
+            { InventoryManager.Difficulty.Easy, 0.55f }
+        };
 
     private void Start()
     {
         SetSpawnTime();
     }
 
-    private void SetSpawnTime()
+    public void SetSpawnTime()
     {
-        var spawnTime = _inventoryManager.ChicchettiRate[_inventoryManager.CurrentLevel - 1];
+        var spawnTime = _inventoryManager.ChicchettiRate[_inventoryManager.CurrentLevel - 1] /
+                        _spawnFactor[_inventoryManager.GameDifficulty];
         if (_inventoryManager.CrazyLevels.Contains(_inventoryManager.CurrentLevel))
             spawnTime /= 4f;
         _nextSpawn = Random.Range(spawnTime * 0.8f, spawnTime * 1.25f);
