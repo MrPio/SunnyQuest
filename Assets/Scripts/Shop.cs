@@ -49,7 +49,7 @@ public class Shop : MonoBehaviour
     {
         if (answer)
         {
-            if (_inventoryManager.Coins >= Model.Cost)
+            if (_inventoryManager.Coins >= Model.CalculateCost)
             {
                 _audioSource.PlayOneShot(buySound);
                 Model.Buy();
@@ -73,6 +73,6 @@ public class Shop : MonoBehaviour
         NameText.text = Model.GetType().Name;
         ContentText.text = Model.Message;
         MercantImage.sprite = Resources.Load<Sprite>(Model.SpriteCut);
-        CostText.text = Model.Cost.ToString();
+        CostText.text = Model.CalculateCost.ToString();
     }
 }

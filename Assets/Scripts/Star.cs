@@ -29,6 +29,7 @@ public class Star : MonoBehaviour
             Destroy(_inventoryManager.Gates[0]);
             _inventoryManager.CollectStar();
             _timer.NewLevel();
+            InventoryManager.GetInstance.CollectPoints(typeof(Star));
         }
     }
 }

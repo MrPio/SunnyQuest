@@ -51,7 +51,6 @@ public class MapManager : MonoBehaviour
     private void NewLevel()
     {
         var currentLevel = ++_inventoryManager.LastSpawnedLevel;
-        print($"*** CurrentLevel={currentLevel} ***");
         var newLevel = Instantiate(levels[currentLevel - 1], transform);
         var currentLevelSize = _inventoryManager.LevelsSize[currentLevel - 1];
         levelTilemaps.Add(newLevel.GetComponent<Tilemap>());

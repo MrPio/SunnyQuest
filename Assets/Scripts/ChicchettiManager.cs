@@ -18,6 +18,8 @@ public class ChicchettiManager : MonoBehaviour
     private void SetSpawnTime()
     {
         var spawnTime = _inventoryManager.ChicchettiRate[_inventoryManager.CurrentLevel - 1];
+        if (_inventoryManager.CrazyLevels.Contains(_inventoryManager.CurrentLevel))
+            spawnTime /= 4f;
         _nextSpawn = Random.Range(spawnTime * 0.8f, spawnTime * 1.25f);
     }
 

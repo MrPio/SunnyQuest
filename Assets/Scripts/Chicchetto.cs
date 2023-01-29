@@ -17,6 +17,20 @@ public class Chicchetto : MonoBehaviour
     private int _currentDropped;
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
 
+    private Dictionary<InventoryManager.Difficulty, int> _dropFactor =
+        new()
+        {
+            { InventoryManager.Difficulty.Hard, 4 },
+            { InventoryManager.Difficulty.Medium, 2 },
+            { InventoryManager.Difficulty.Easy, 1 }
+        };
+    private Dictionary<InventoryManager.Difficulty, float> _speedFactor =
+        new()
+        {
+            { InventoryManager.Difficulty.Hard, 1.15f },
+            { InventoryManager.Difficulty.Medium, 1f },
+            { InventoryManager.Difficulty.Easy, 0.85f }
+        };
     private static Camera MainCam => CamManager.mainCam;
 
     private void Start()
@@ -30,8 +44,9 @@ public class Chicchetto : MonoBehaviour
             maxInclusive: levelSize.y - CamManager.camHeight * 0.55f
         );
         transform.position = new Vector2(xPos, yPos);
-        rigidbody2D.velocity = Vector2.left * speed;
+        rigidbody2D.velocity = Vector2.left * speed*_speedFactor[_inventoryManager.GameDifficulty];
 
+        maxDrops = _dropFactor[_inventoryManager.GameDifficulty];
         _drops = Random.Range(1, maxDrops + 1);
         _dropDistance = Random.Range(0.5f, 1.2f);
     }

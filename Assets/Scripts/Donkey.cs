@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 
 public class Donkey : MonoBehaviour
@@ -8,6 +10,14 @@ public class Donkey : MonoBehaviour
     [SerializeField] private float Speed = 1;
     private Pacman _pacman;
     
+    private Dictionary<InventoryManager.Difficulty, float> _difficultyFactor =
+        new()
+        {
+            { InventoryManager.Difficulty.Hard, 1.4f },
+            { InventoryManager.Difficulty.Medium, 1f },
+            { InventoryManager.Difficulty.Easy, 0.75f }
+        };
+    
     private float _time;
     private Vector2 _startPosition;
 
@@ -15,6 +25,7 @@ public class Donkey : MonoBehaviour
     {
         _startPosition = transform.position;
         _pacman = GameObject.FindGameObjectWithTag("Pacman").GetComponent<Pacman>();
+        Speed *= _difficultyFactor[InventoryManager.GetInstance.GameDifficulty];
     }
 
     private void FixedUpdate()

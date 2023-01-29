@@ -43,12 +43,19 @@ public class Pacman : MonoBehaviour
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
     private Vector2 _backupPosition;
     private float _lastJump;
-
+    private Dictionary<InventoryManager.Difficulty, float> _speedFactor =
+        new()
+        {
+            { InventoryManager.Difficulty.Hard, 1.12f },
+            { InventoryManager.Difficulty.Medium, 1f },
+            { InventoryManager.Difficulty.Easy, 0.9f }
+        };
     private void Start()
     {
         bounds = bc.bounds;
         UpdateHeartsIcons();
         _backupPosition = transform.position;
+        moveSpeed *= _speedFactor[_inventoryManager.GameDifficulty];
     }
 
     private void Update()
@@ -113,12 +120,13 @@ public class Pacman : MonoBehaviour
             }
 
             ++jumpCount;
-            rb.velocity += Vector2.up * jumpForce;
+            if (rb.velocity.y < jumpForce * jumpHoldLimit)
+                rb.velocity += Vector2.up * jumpForce;
         }
 
         // PREVENT FROM GOING TOO HIGH
         if (transform.position.y > _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1].y -
-            CamManager.camHeight / 2f && rb.velocity.y > 0)
+            CamManager.camHeight / 2f + 1.5f && rb.velocity.y > 0)
         {
             print("Too high!");
             rb.velocity = new Vector2(rb.velocity.x, -2);
@@ -181,11 +189,22 @@ public class Pacman : MonoBehaviour
         Health -= damage;
         if (Health <= 0)
         {
-            Instantiate(_gameOverScreen, GameObject.FindWithTag("Canvas").transform);
+            var gameOver = Instantiate(_gameOverScreen, GameObject.FindWithTag("Canvas").transform);
+            gameOver.transform.Find("Points").GetComponent<TextMeshProUGUI>().text =
+                $"You gained:" + Environment.NewLine + $"{_inventoryManager.Points} points!";
             Destroy(gameObject);
         }
 
         UpdateHeartsIcons();
+    }
+
+    public void Win()
+    {
+        var gameOver = Instantiate(_gameOverScreen, GameObject.FindWithTag("Canvas").transform);
+        gameOver.transform.Find("Points").GetComponent<TextMeshProUGUI>().text =
+            $"You gained:" + Environment.NewLine + $"{_inventoryManager.Points} points!";
+        gameOver.transform.Find("Title").GetComponent<TextMeshProUGUI>().text =
+            $"You Win!!!";
     }
 
     public void UpdateHeartsIcons()

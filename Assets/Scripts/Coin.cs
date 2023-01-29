@@ -27,6 +27,7 @@ public class Coin : MonoBehaviour
             _audioSource.PlayOneShot(AudioClips[Random.Range(0, AudioClips.Count)]);
             Destroy(gameObject);
             _inventoryManager.Coins += 1;
+            _inventoryManager.CollectPoints(typeof(Coin));
             _coinCounter.text = _inventoryManager.Coins.ToString();
         }
     }

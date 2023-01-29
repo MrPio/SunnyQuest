@@ -9,7 +9,7 @@ namespace DefaultNamespace.Model
             Sprite = "Images/Gino";
             SpriteCut = "Images/GinoCut";
             Message = "Wuzzup! Aren't you tired of yer little jumps? Wanna buy a +1 JMP?";
-            Cost = 9;
+            BaseCost = 14;
         }
 
         public override void Buy()
@@ -17,6 +17,7 @@ namespace DefaultNamespace.Model
             base.Buy();
             var Pacman = GameObject.FindWithTag("Pacman").GetComponent<Pacman>();
             ++Pacman.jumpHoldLimit;
+            InventoryManager.GetInstance.CollectPoints(typeof(Gino));
         }
     }
 }
