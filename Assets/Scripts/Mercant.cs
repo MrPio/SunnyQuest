@@ -21,16 +21,17 @@ public class Mercant : MonoBehaviour
         _soSpriteRenderer.sprite = Resources.Load<Sprite>(Model.Sprite);
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerStay2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("Pacman"))
         {
             if (_inventoryManager.IsThereMessageBox)
                 return;
-            if(Time.timeSinceLevelLoad-_inventoryManager.LastSpacebarMessageBox<1f)
+            if(Time.timeSinceLevelLoad-_inventoryManager.LastSpacebarMessageBox<1.75f)
                 return;
             _inventoryManager.MessageBox = Instantiate(_messageBox, _canvas);
             _inventoryManager.IsThereMessageBox = true;
+            _inventoryManager.LastMessageBox = Time.timeSinceLevelLoad;
             _inventoryManager.Shop = _inventoryManager.MessageBox.GetComponent<Shop>();
             _inventoryManager.Shop.Model = Model;
             _inventoryManager.Shop.Initialize();

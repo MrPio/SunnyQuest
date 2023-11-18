@@ -58,7 +58,7 @@ public class MapManager : MonoBehaviour
         var currentLevelSize = _inventoryManager.LevelsSize[currentLevel - 1];
         levelTilemaps.Add(newLevel.GetComponent<Tilemap>());
         newLevel.transform.SetPositionAndRotation(
-            position: new Vector2(lastSpawn, 0),
+            position: new Vector2(lastSpawn- (CamManager.camWidth - 18)/2f, 0),
             rotation: Quaternion.identity
         );
         _instantiatedLevels.Add(newLevel);

@@ -4,15 +4,12 @@ using System.Linq;
 using DefaultNamespace;
 using TMPro;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
 public class Pacman : MonoBehaviour
 {
-    // public LayerMask platform;
     public Rigidbody2D rb;
     public BoxCollider2D bc;
     public SpriteRenderer sr;
@@ -33,8 +30,8 @@ public class Pacman : MonoBehaviour
     [SerializeField] private List<AudioClip> hitClips;
     [SerializeField] private List<AudioClip> callClips;
 
-    private Vector2 input;
-    private bool inputJump;
+    public Vector2 input;
+    public bool inputJump;
     private int jumpCount = 1;
     private Bounds bounds;
     private int coins = 0;
@@ -43,19 +40,34 @@ public class Pacman : MonoBehaviour
     private readonly InventoryManager _inventoryManager = InventoryManager.GetInstance;
     private Vector2 _backupPosition;
     private float _lastJump;
+    private GameObject _pad, _jumpButton;
 
     private Dictionary<InventoryManager.Difficulty, float> _speedFactor =
         new()
         {
-            { InventoryManager.Difficulty.Hard, 1.12f },
-            { InventoryManager.Difficulty.Medium, 1f },
-            { InventoryManager.Difficulty.Easy, 0.9f }
+            { InventoryManager.Difficulty.Hard, 1.05f },
+            { InventoryManager.Difficulty.Medium, 1.10f },
+            { InventoryManager.Difficulty.Easy, 1.15f }
+        };
+
+    private Dictionary<InventoryManager.Difficulty, float> _jumpFactor =
+        new()
+        {
+            { InventoryManager.Difficulty.Hard, 0.95f },
+            { InventoryManager.Difficulty.Medium, 0.98f },
+            { InventoryManager.Difficulty.Easy, 1.05f }
         };
 
     private void Start()
     {
         bounds = bc.bounds;
         _backupPosition = transform.position;
+        if (Application.platform is RuntimePlatform.Android or RuntimePlatform.IPhonePlayer)
+        {
+            _pad = GameObject.FindWithTag("Pad");
+            _jumpButton = GameObject.FindWithTag("JumpKey");
+            print(_pad.transform.position);
+        }
     }
 
     public void Initialize()
@@ -65,11 +77,57 @@ public class Pacman : MonoBehaviour
 
     private void Update()
     {
-        input.x = Input.GetAxisRaw("Horizontal");
-        input.y = Input.GetAxisRaw("Vertical");
-        inputJump = Input.GetKey(KeyCode.Space);
+        if (Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer)
+        {
+            input.x = Input.GetAxisRaw("Horizontal");
+            input.y = Input.GetAxisRaw("Vertical");
+            inputJump = Input.GetKey(KeyCode.Space);
+        }
+
+        else
+            HandleTouches();
+
         if (Time.timeSinceLevelLoad - _inventoryManager.LastSpacebarMessageBox < 0.6f)
             inputJump = false;
+    }
+
+    private void HandleTouches()
+    {
+        for (var i = 0; i < Input.touchCount; i++)
+        {
+            var touch = Input.GetTouch(i);
+            var touchPhase = touch.phase;
+            if (touchPhase is TouchPhase.Began or TouchPhase.Ended or TouchPhase.Moved or TouchPhase.Canceled)
+            {
+                var down = touchPhase is TouchPhase.Began or TouchPhase.Moved ? 1 : 0;
+                var position = CamManager.mainCam.ScreenToWorldPoint(touch.position);
+
+                if (((Vector2)position - (Vector2)(_pad.transform.position)).sqrMagnitude < 18f)
+                {
+                    if (touchPhase == TouchPhase.Moved)
+                        input = Vector2.zero;
+                    var newPosition = (Vector2)position - (Vector2)(_pad.transform.position);
+                    var sin = Vector2.Dot(Vector2.up, newPosition.normalized);
+                    var cos = Vector2.Dot(Vector2.right, newPosition.normalized);
+                    if (sin > 0.707f)
+                        input.y = 1 * down;
+                    else if (sin < -0.707f)
+                        input.y = -1 * down;
+                    else
+                    {
+                        if (cos > 0)
+                            input.x = 1 * down;
+                        else
+                            input.x = -1 * down;
+                    }
+                }
+
+                if (((Vector2)position - (Vector2)(_jumpButton.transform.position)).sqrMagnitude < 18f)
+                {
+                    inputJump = down == 1;
+                }
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -99,7 +157,7 @@ public class Pacman : MonoBehaviour
             if (Math.Abs(rb.velocity.y) < 0.05 && lastHop >= _hopRate)
             {
                 lastHop = 0;
-                rb.AddForce(Vector2.up * _hopStrenght);
+                rb.AddForce(Vector2.up * _hopStrenght + Vector2.right * rb.velocity);
                 CamManager.AudioSource.PlayOneShot(hopClips[Random.Range(0, hopClips.Count)]);
             }
         }
@@ -128,14 +186,14 @@ public class Pacman : MonoBehaviour
 
             ++jumpCount;
             if (rb.velocity.y < jumpForce * jumpHoldLimit)
-                rb.velocity += Vector2.up * jumpForce;
+                rb.velocity += Vector2.up * (jumpForce * _jumpFactor[_inventoryManager.GameDifficulty]);
         }
 
         // PREVENT FROM GOING TOO HIGH
         if (transform.position.y > _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1].y -
-            CamManager.camHeight / 2f + 1.5f && rb.velocity.y > 0)
+            CamManager.camHeight / 2f + 2.2f && rb.velocity.y > 0)
         {
-            // print("Too high!");
+            // print("Too high!");  
             rb.velocity = new Vector2(rb.velocity.x, -2);
         }
 
@@ -202,6 +260,8 @@ public class Pacman : MonoBehaviour
             gameOver.transform.Find("Points").GetComponent<TextMeshProUGUI>().text =
                 $"You gained:" + Environment.NewLine + $"{_inventoryManager.Points} points!";
             Destroy(gameObject);
+            if (Random.Range(0, 1f) <= 0.33f)
+                GameObject.FindWithTag("AdMobManager").GetComponent<AdMobManager>().Show();
         }
 
         UpdateHeartsIcons();

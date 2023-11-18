@@ -26,6 +26,11 @@ public class CamManager : MonoBehaviour
         camWidth = camHeight * mainCam.aspect;
         _hillsWidth = _hills.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
         _hills.position = new Vector2(transform.position.x - camWidth / 2f, _hills.position.y);
+        if (Application.platform is (RuntimePlatform.Android or RuntimePlatform.IPhonePlayer))
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
+        }
     }
 
     private void FixedUpdate()

@@ -4,6 +4,7 @@ namespace DefaultNamespace.Model
 {
     public class Marmo : MercantModel
     {
+        
         public Marmo()
         {
             Sprite = "Images/Marmo";
@@ -17,7 +18,7 @@ namespace DefaultNamespace.Model
             base.Buy();
             var Pacman = GameObject.FindWithTag("Pacman").GetComponent<Pacman>();
             Pacman.ladderSpeed += 1f;
-            Pacman.moveSpeed += 0.8f;
+            Pacman.moveSpeed += 1.1f;
             InventoryManager.GetInstance.CollectPoints(typeof(Marmo));
         }
     }

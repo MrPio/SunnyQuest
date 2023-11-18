@@ -16,7 +16,7 @@ namespace DefaultNamespace.Model
         {
             base.Buy();
             var Pacman = GameObject.FindWithTag("Pacman").GetComponent<Pacman>();
-            ++Pacman.jumpHoldLimit;
+            Pacman.jumpForce+=0.2f;
             InventoryManager.GetInstance.CollectPoints(typeof(Gino));
         }
     }

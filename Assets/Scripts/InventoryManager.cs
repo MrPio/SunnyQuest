@@ -16,6 +16,7 @@ namespace DefaultNamespace
         public GameObject MessageBox;
         public Shop Shop;
         public bool IsThereMessageBox;
+        public float LastMessageBox;
         public float LastSpacebarMessageBox;
         public bool GameStarted = false;
 
@@ -80,8 +81,8 @@ namespace DefaultNamespace
             0, 0, 0, 0, 0,
             8, 7, 7, 8, 0,
             6, 5, 6, 0,
-            6, 5, 6, 5.5f, 5.5f,
-            4, 7, 4, 0,
+            12, 8, 9, 7.5f, 6.5f,
+            6, 8, 6, 0, 
         };
 
         public readonly List<MercantModel> MercantModels = new()
@@ -111,6 +112,8 @@ namespace DefaultNamespace
 
         public void HandleMessageBox(float xInput, bool spaceBar)
         {
+            if(Time.timeSinceLevelLoad-LastMessageBox<0.75f)
+                return;
             if (spaceBar)
             {
                 Shop.Confirm();

@@ -45,7 +45,7 @@ SortingGroup:
   m_Enabled: 1
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: -4
 --- !u!114 &3819753659351161661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,6 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cloud: {fileID: 9113718202761639004, guid: 00147093aec4e1a4eab7bee042241c57, type: 3}
   _cloudsRate: 0.75
+  _target: {fileID: 0}
 --- !u!1001 &8106400997858158766
 PrefabInstance:
   m_ObjectHideFlags: 0
