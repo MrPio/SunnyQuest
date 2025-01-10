@@ -25,7 +25,7 @@ public class CloudManager : MonoBehaviour
 
             if (_target.velocity.x < 0.05 && Random.Range(0, 3) != 0)
             {
-                return;
+                return; 
             }
 
             var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel];

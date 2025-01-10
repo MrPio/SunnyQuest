@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Level
+  - Coin
+  - Pacman
+  - Ground
+  - Canvas
+  - Heart
+  - CoinCounter
+  - Cloud
+  - Hills
+  - Timer
+  - Gate
+  - Mercant
+  - Donkey
+  - LevelProgress
+  - Health
+  - CoinsCount
+  - TutorialStar
+  - NewGame
+  - ChicchettiManager
+  - Pad
+  - JumpKey
+  - AdMobManager
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Grid
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: MyUI
+    uniqueID: 1316583863
+    locked: 0
