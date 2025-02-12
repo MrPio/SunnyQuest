@@ -17,7 +17,7 @@ public class Cloud : MonoBehaviour
         var heightFactor = (transform.position.y + CamManager.camHeight * 0.15f) / (CamManager.camHeight * 0.7f);
         var speed = _moveSpeed * (2f - heightFactor*0.75f);
         _sr.sprite = _clouds[Random.Range(0, _clouds.Count)];
-        _rb.velocity = Vector2.left * speed;
+        _rb.linearVelocity = Vector2.left * speed;
     }
 
     private void FixedUpdate()

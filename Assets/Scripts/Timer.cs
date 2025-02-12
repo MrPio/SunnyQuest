@@ -18,11 +18,11 @@ public class Timer : MonoBehaviour
         999, // 5
         52,
         48,
-        45,
-        40,
+        52,
+        48,
         999, // 10
-        35,
-        30,
+        42,
+        40,
         75,
         999,
         190, // 15
@@ -32,8 +32,8 @@ public class Timer : MonoBehaviour
         240,
         180, // 20
         80,
-        45,
-        20
+        48,
+        28
     };
 
 
@@ -45,9 +45,9 @@ public class Timer : MonoBehaviour
     private Dictionary<InventoryManager.Difficulty, float> _difficultyFactor =
         new()
         {
-            { InventoryManager.Difficulty.Hard, 0.7f },
-            { InventoryManager.Difficulty.Medium, 1f },
-            { InventoryManager.Difficulty.Easy, 1.5f }
+            { InventoryManager.Difficulty.Hard, 0.65f },
+            { InventoryManager.Difficulty.Medium, 0.95f },
+            { InventoryManager.Difficulty.Easy, 1.4f }
         };
 
     private void Start()

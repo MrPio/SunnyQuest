@@ -36,7 +36,7 @@ public class CamManager : MonoBehaviour
     private void FixedUpdate()
     {
         // CAM MOVEMENT
-        var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1];
+        var levelSize = _inventoryManager.LevelsSize[MapManager.RandomLevelOrder[_inventoryManager.CurrentLevel - 1]];
         var targetPos = targetToFollow.position;
         var newPos = new Vector2(
             x: math.max(_inventoryManager.VisitedLevels, targetPos.x),

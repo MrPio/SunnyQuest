@@ -23,13 +23,10 @@ public class CloudManager : MonoBehaviour
             _elapsed = 0;
             _nextCloud = Random.Range(1 / _cloudsRate * 0.8f, 1 / _cloudsRate * 1.25f);
 
-            if (_target.velocity.x < 0.05 && Random.Range(0, 3) != 0)
+            if (_target.linearVelocity.x < 0.05 && Random.Range(0, 3) != 0)
             {
                 return; 
             }
-
-            var levelSize = _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel];
-
             var cloud = Instantiate(_cloud, transform);
             var camPos = CamManager.mainCam.transform.position;
             var xPos = camPos.x + CamManager.camWidth * 0.65f;

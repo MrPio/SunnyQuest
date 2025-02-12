@@ -79,9 +79,10 @@ public class Pacman : MonoBehaviour
     {
         if (Application.platform != RuntimePlatform.Android && Application.platform != RuntimePlatform.IPhonePlayer)
         {
-            input.x = Input.GetAxisRaw("Horizontal");
-            input.y = Input.GetAxisRaw("Vertical");
-            inputJump = Input.GetKey(KeyCode.Space);
+            var movement = InputManager.Instance.GetMovement;
+            input.x = movement.x;
+            input.y = movement.y;
+            inputJump = InputManager.Instance.IsJumping;
         }
 
         else
@@ -142,8 +143,8 @@ public class Pacman : MonoBehaviour
         }
 
         // ON LADDER MOVEMENT
-        if (math.abs(input.y) > 0.05 && rb.velocity.y < input.y * ladderSpeed && isOnTile("Ladder"))
-            rb.velocity = new Vector2(rb.velocity.x, input.y * ladderSpeed);
+        if (math.abs(input.y) > 0.05 && rb.linearVelocity.y < input.y * ladderSpeed && isOnTile("Ladder"))
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, input.y * ladderSpeed);
 
         // X MOVEMENT WITH HOPS
         if (input.sqrMagnitude > 0.05f)
@@ -154,10 +155,10 @@ public class Pacman : MonoBehaviour
                 transform.position += movement;
 
             lastHop += Time.fixedDeltaTime;
-            if (Math.Abs(rb.velocity.y) < 0.05 && lastHop >= _hopRate)
+            if (Math.Abs(rb.linearVelocity.y) < 0.05 && lastHop >= _hopRate)
             {
                 lastHop = 0;
-                rb.AddForce(Vector2.up * _hopStrenght + Vector2.right * rb.velocity);
+                rb.AddForce(Vector2.up * _hopStrenght + Vector2.right * rb.linearVelocity);
                 CamManager.AudioSource.PlayOneShot(hopClips[Random.Range(0, hopClips.Count)]);
             }
         }
@@ -176,8 +177,8 @@ public class Pacman : MonoBehaviour
         // Y MOVEMENT, JUMP
         if (inputJump && jumpCount < jumpHoldLimit)
         {
-            if (jumpCount == 1 && rb.velocity.y > 0.05)
-                rb.velocity = new Vector2(rb.velocity.x, 0);
+            if (jumpCount == 1 && rb.linearVelocity.y > 0.05)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
             if (jumpCount == 1 && Time.timeSinceLevelLoad - _lastJump > 0.4f)
             {
                 CamManager.AudioSource.PlayOneShot(jumpClip);
@@ -185,16 +186,16 @@ public class Pacman : MonoBehaviour
             }
 
             ++jumpCount;
-            if (rb.velocity.y < jumpForce * jumpHoldLimit)
-                rb.velocity += Vector2.up * (jumpForce * _jumpFactor[_inventoryManager.GameDifficulty]);
+            if (rb.linearVelocity.y < jumpForce * jumpHoldLimit)
+                rb.linearVelocity += Vector2.up * (jumpForce * _jumpFactor[_inventoryManager.GameDifficulty]);
         }
 
         // PREVENT FROM GOING TOO HIGH
-        if (transform.position.y > _inventoryManager.LevelsSize[_inventoryManager.CurrentLevel - 1].y -
-            CamManager.camHeight / 2f + 2.2f && rb.velocity.y > 0)
+        if (transform.position.y > _inventoryManager.LevelsSize[MapManager.RandomLevelOrder[_inventoryManager.CurrentLevel - 1]].y -
+            CamManager.camHeight / 2f + 2.2f && rb.linearVelocity.y > 0)
         {
             // print("Too high!");  
-            rb.velocity = new Vector2(rb.velocity.x, -2);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -2);
         }
 
         // RESTORE JUMP IF ON GROUND
@@ -206,7 +207,7 @@ public class Pacman : MonoBehaviour
                 var southTile = tilemap.GetTile(southCheck);
 
                 // IF STANDING STILL ON TILE
-                if (math.abs(input.y) < 0.05 && Math.Abs(rb.velocity.y) < 0.1f && southTile != null)
+                if (math.abs(input.y) < 0.05 && Math.Abs(rb.linearVelocity.y) < 0.1f && southTile != null)
                 {
                     jumpCount = 1;
                     _backupPosition = transform.position;
@@ -227,8 +228,8 @@ public class Pacman : MonoBehaviour
         }
 
         // CLAMP -Y SPEED
-        var currentSpeed = rb.velocity;
-        rb.velocity = new Vector2(currentSpeed.x, math.max(-_velocityYMax, currentSpeed.y));
+        var currentSpeed = rb.linearVelocity;
+        rb.linearVelocity = new Vector2(currentSpeed.x, math.max(-_velocityYMax, currentSpeed.y));
     }
 
     private bool isOnTile(string tileName)
@@ -254,14 +255,15 @@ public class Pacman : MonoBehaviour
         _lastHit = now;
         _animator.SetTrigger("Hit");
         Health -= damage;
+        StartCoroutine(InputManager.Instance.Vibrate());
         if (Health <= 0)
         {
             var gameOver = Instantiate(_gameOverScreen, GameObject.FindWithTag("Canvas").transform);
             gameOver.transform.Find("Points").GetComponent<TextMeshProUGUI>().text =
                 $"You gained:" + Environment.NewLine + $"{_inventoryManager.Points} points!";
             Destroy(gameObject);
-            if (Random.Range(0, 1f) <= 0.33f)
-                GameObject.FindWithTag("AdMobManager").GetComponent<AdMobManager>().Show();
+            // if (Random.Range(0, 1f) <= 0.33f)
+            //     GameObject.FindWithTag("AdMobManager").GetComponent<AdMobManager>().Show();
         }
 
         UpdateHeartsIcons();

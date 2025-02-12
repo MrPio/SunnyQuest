@@ -12,6 +12,7 @@ public class MapManager : MonoBehaviour
 
     public List<GameObject> levels;
     [SerializeField] private GameObject gate;
+    public static List<int> RandomLevelOrder;
 
     private float lastSpawn;
     private Grid gridComponent;
@@ -23,6 +24,20 @@ public class MapManager : MonoBehaviour
         gridComponent = GetComponent<Grid>();
         foreach (var g in GameObject.FindGameObjectsWithTag("EditorOnly"))
             Destroy(g);
+        RandomLevelOrder = new List<int> { 0 };
+        foreach (var restLevel in _inventoryManager.RestLevels)
+        {
+            RandomLevelOrder.AddRange(Enumerable
+                .Range(RandomLevelOrder.Count, restLevel - 1 - RandomLevelOrder.Count)
+                .OrderBy(_ => Random.value));
+            RandomLevelOrder.Add(restLevel - 1);
+        }
+
+        RandomLevelOrder.AddRange(Enumerable.Range(RandomLevelOrder.Count, levels.Count - 2 - RandomLevelOrder.Count)
+            .OrderBy(_ => Random.value));
+        RandomLevelOrder.Add(levels.Count - 1);
+
+        print(string.Join(", ", RandomLevelOrder));
         NewLevel();
     }
 
@@ -54,11 +69,11 @@ public class MapManager : MonoBehaviour
     private void NewLevel()
     {
         var currentLevel = ++_inventoryManager.LastSpawnedLevel;
-        var newLevel = Instantiate(levels[currentLevel - 1], transform);
-        var currentLevelSize = _inventoryManager.LevelsSize[currentLevel - 1];
+        var newLevel = Instantiate(levels[RandomLevelOrder[currentLevel - 1]], transform);
+        var currentLevelSize = _inventoryManager.LevelsSize[RandomLevelOrder[currentLevel - 1]];
         levelTilemaps.Add(newLevel.GetComponent<Tilemap>());
         newLevel.transform.SetPositionAndRotation(
-            position: new Vector2(lastSpawn- (CamManager.camWidth - 18)/2f, 0),
+            position: new Vector2(lastSpawn - (CamManager.camWidth - 18) / 2f, 0),
             rotation: Quaternion.identity
         );
         _instantiatedLevels.Add(newLevel);
@@ -81,9 +96,9 @@ public class MapManager : MonoBehaviour
         lastSpawn += (currentLevelSize.x * gridComponent.cellSize.x);
         if (currentLevel > 1)
             _inventoryManager.SpawnedLevelsTotalSize +=
-                _inventoryManager.LevelsSize[currentLevel - 2].x * gridComponent.cellSize.x;
+                _inventoryManager.LevelsSize[RandomLevelOrder[currentLevel - 2]].x * gridComponent.cellSize.x;
         // print($"*** Added level ***");
-        
+
         // CHICCHETTIMANAGER INITIALIZE
         GameObject.FindWithTag("ChicchettiManager").GetComponent<ChicchettiManager>().SetSpawnTime();
     }

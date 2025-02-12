@@ -44,7 +44,7 @@ public class Chicchetto : MonoBehaviour
             maxInclusive: CamManager.camHeight * 0.45f
         );
         transform.position = new Vector2(xPos, yPos);
-        rigidbody2D.velocity = Vector2.left * speed*_speedFactor[_inventoryManager.GameDifficulty];
+        rigidbody2D.linearVelocity = Vector2.left * speed*_speedFactor[_inventoryManager.GameDifficulty];
 
         maxDrops = _dropFactor[_inventoryManager.GameDifficulty];
         _drops = Random.Range(1, maxDrops + 1);
