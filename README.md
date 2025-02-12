@@ -1,9 +1,7 @@
 # SunnyQuest
 Can you survive through 23 levels to reach the goal? Pick up the star to win the level, watch out for the timer and the enemies, collect the coins and use them at the shops that you will find in your adventure!
 
-# PacmanQuest-Unity-
-
-## Play it [HERE](https://mrpio.github.io/PacmanQuest-Unity-/)
+## ⬇️ Download it [HERE](https://github.com/MrPio/PacmanQuest/releases/tag/stable)
 ### ⏱️Time Invested: 6 days
 ## Screenshoots
 ![Screenshot_20230129_174836](https://user-images.githubusercontent.com/22773005/215341322-62a109ca-f727-41e7-b00f-b61f5a695f63.png)
