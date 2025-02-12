@@ -1,4 +1,4 @@
-# SunnyQuest
+# Pacman Quest
 Can you survive through 23 levels to reach the goal? Pick up the star to win the level, watch out for the timer and the enemies, collect the coins and use them at the shops that you will find in your adventure!
 
 ## [🌍 Play it on the web!](https://play.unity.com/en/games/d8005ead-716d-43c7-aecb-437ca361a443/pacman-quest)
